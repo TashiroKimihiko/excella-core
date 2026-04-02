@@ -851,4 +851,40 @@ public class PoiUtilTest extends WorkbookTest {
         int lastColNum2 = PoiUtil.getLastColNum( sheet_7);
         assertEquals( 10, lastColNum2);
     }
+
+    /**
+     * getLastRowNum が、指定した列範囲に対して正しい最終行を返すことを確認する。
+     *
+     * 確認する観点:
+     * - 対象列外のセルは判定に使われないこと
+     * - 対象範囲の末尾列にあるセルも正しく検出できること
+     * - 対象列にセルが存在しない場合は -1 を返すこと
+     */
+    @Test
+    public void testPoiUtil4() {
+        Workbook workbook = getWorkbook();
+
+        // 対象列(E列)より下の行に別列(A列)のセルがあっても、
+        // 対象列の最終行は E列に値がある 5 行目になることを確認する。
+        Sheet sheet1 = workbook.createSheet( "getLastRowNum1");
+        sheet1.createRow( 5).createCell( 4).setCellValue( "target");
+        sheet1.createRow( 7).createCell( 0).setCellValue( "outside");
+        assertEquals( 5, PoiUtil.getLastRowNum( sheet1, 4, 4));
+
+        // 対象範囲の末尾列(T列)にセルがある場合でも、
+        // その行を最終行として正しく検出できることを確認する。
+        Sheet sheet2 = workbook.createSheet( "getLastRowNum2");
+        sheet2.createRow( 3);
+        for ( int i = 0; i < 20; i++) {
+            sheet2.getRow( 3).createCell( i).setCellValue( "value_" + i);
+        }
+        sheet2.createRow( 8).createCell( 0).setCellValue( "outside");
+        assertEquals( 3, PoiUtil.getLastRowNum( sheet2, 19, 19));
+
+        // シート内にセルはあっても対象列(T列)にセルがなければ、
+        // 最終行は見つからないため -1 を返すことを確認する。
+        Sheet sheet3 = workbook.createSheet( "getLastRowNum3");
+        sheet3.createRow( 4).createCell( 0).setCellValue( "outside");
+        assertEquals( -1, PoiUtil.getLastRowNum( sheet3, 19, 19));
+    }
 }

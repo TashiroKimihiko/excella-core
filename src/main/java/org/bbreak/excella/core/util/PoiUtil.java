@@ -603,14 +603,12 @@ public final class PoiUtil {
             if ( row == null) {
                 continue;
             }
-            Iterator<Cell> rowIterator = row.iterator();
-            while ( rowIterator.hasNext()) {
-                Cell cell = rowIterator.next();
+            // 対象列範囲だけを直接参照し、不要なセル走査を避ける
+            for ( int j = firstColumnIndex; j <= lastColmunIndex; j++) {
+                Cell cell = row.getCell( j);
                 if ( cell != null) {
-                    if ( firstColumnIndex <= cell.getColumnIndex() && cell.getColumnIndex() <= lastColmunIndex) {
-                        rangeLastRowNum = i;
-                        break;
-                    }
+                    rangeLastRowNum = i;
+                    break;
                 }
             }
             if ( rangeLastRowNum != -1) {
