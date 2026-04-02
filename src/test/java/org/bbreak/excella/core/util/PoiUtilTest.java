@@ -853,12 +853,7 @@ public class PoiUtilTest extends WorkbookTest {
     }
 
     /**
-     * getLastRowNum が、指定した列範囲に対して正しい最終行を返すことを確認する。
-     *
-     * 確認する観点:
-     * - 対象列外のセルは判定に使われないこと
-     * - 対象範囲の末尾列にあるセルも正しく検出できること
-     * - 対象列にセルが存在しない場合は -1 を返すこと
+     * getLastRowNum の判定結果を確認する。
      */
     @Test
     public void testPoiUtil4() {
@@ -886,5 +881,12 @@ public class PoiUtilTest extends WorkbookTest {
         Sheet sheet3 = workbook.createSheet( "getLastRowNum3");
         sheet3.createRow( 4).createCell( 0).setCellValue( "outside");
         assertEquals( -1, PoiUtil.getLastRowNum( sheet3, 19, 19));
+
+        // 範囲外の列番号を含む場合でも、有効な対象範囲だけで判定することを確認する。
+        Sheet sheet4 = workbook.createSheet( "getLastRowNum4");
+        sheet4.createRow( 0).createCell( 0).setCellValue( "value");
+        assertEquals( 0, PoiUtil.getLastRowNum( sheet4, -1, 0));
+        assertEquals( -1, PoiUtil.getLastRowNum( sheet4, -1, -1));
+        assertEquals( 0, PoiUtil.getLastRowNum( sheet4, 0, 1000));
     }
 }

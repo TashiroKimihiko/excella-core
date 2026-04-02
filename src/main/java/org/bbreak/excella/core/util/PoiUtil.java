@@ -603,8 +603,10 @@ public final class PoiUtil {
             if ( row == null) {
                 continue;
             }
-            // 対象列範囲だけを直接参照し、不要なセル走査を避ける
-            for ( int j = firstColumnIndex; j <= lastColmunIndex; j++) {
+            // 対象列範囲だけを直接参照しつつ、範囲外の列番号は未検出扱いにする
+            int startColumnIndex = Math.max( firstColumnIndex, 0);
+            int endColumnIndex = Math.min( lastColmunIndex, row.getLastCellNum() - 1);
+            for ( int j = startColumnIndex; j <= endColumnIndex; j++) {
                 Cell cell = row.getCell( j);
                 if ( cell != null) {
                     rangeLastRowNum = i;
